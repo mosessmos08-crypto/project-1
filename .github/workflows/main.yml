@@ -38,7 +38,7 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_KEY }}
           script: |
-            docker pull mosesclouddev/for_ci_cd_pipeline
-            docker stop mycontainer || true
-            docker rm mycontainer || true
-            docker run -d -p 80:80 --name mycontainer mosesclouddev/for_ci_cd_pipeline
+            sudo docker pull mosesclouddev/for_ci_cd_pipeline
+            sudo docker stop mycontainer || true
+            sudo docker rm mycontainer || true
+            sudo docker run -d -p 80:80 --name mycontainer mosesclouddev/for_ci_cd_pipeline
