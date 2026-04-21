@@ -1,4 +1,4 @@
-name: basic_pipeline
+name: full_auto_deploy
 
 on:
   push:
@@ -6,15 +6,39 @@ on:
       - main
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
+      # 1. Checkout
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: creating docker image
-        run: docker build -t app .
+      # 2. Build image
+      - name: Build Docker Image
+        run: docker build -t myapp .
 
-      - name: check python syntax
-        run: python -m py_compile app.py
+      # 3. Login DockerHub
+      - name: Docker Login
+        run: docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASS }}
+
+      # 4. Tag
+      - name: Tag Image
+        run: docker tag myapp mosesclouddev/for_ci_cd_pipeline
+
+      # 5. Push
+      - name: Push Image
+        run: docker push mosesclouddev/for_ci_cd_pipeline
+
+      # 6. Deploy to EC2
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_KEY }}
+          script: |
+            docker pull mosesclouddev/for_ci_cd_pipeline
+            docker stop mycontainer || true
+            docker rm mycontainer || true
+            docker run -d -p 80:80 --name mycontainer mosesclouddev/for_ci_cd_pipeline
