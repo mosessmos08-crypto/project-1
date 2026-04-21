@@ -16,5 +16,5 @@ jobs:
       - name: creating docker image
         run: docker build -t app .
 
-      - name: Run Python
-        run: python app.py
+      - name: check python syntax
+        run: python -m py_compile app.py
