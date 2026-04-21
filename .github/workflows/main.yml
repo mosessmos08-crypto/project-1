@@ -41,4 +41,4 @@ jobs:
             sudo docker pull mosesclouddev/for_ci_cd_pipeline
             sudo docker stop mycontainer || true
             sudo docker rm mycontainer || true
-            sudo docker run -d -p 80:80 --name mycontainer mosesclouddev/for_ci_cd_pipeline
+            sudo docker run -d -p 8000:8000 --name mycontainer mosesclouddev/for_ci_cd_pipeline
