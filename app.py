@@ -1,26 +1,30 @@
-import os
-import shutil
+from http.server import BaseHTTPRequestHandler, HTTPServer
+import os, shutil
 
-def get_disk_usage():
-    total, used, free = shutil.disk_usage("/")
-    print("Disk Total:", total // (2**30), "GB")
-    print("Disk Used:", used // (2**30), "GB")
-    print("Disk Free:", free // (2**30), "GB")
+class MyHandler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200)
+        self.send_header('Content-type','text/html')
+        self.end_headers()
 
-def get_cpu_usage():
-    load = os.getloadavg()
-    print("CPU Load (1, 5, 15 mins):", load)
+        load = os.getloadavg()
+        total, used, free = shutil.disk_usage("/")
 
-def main():
-    print(" System Health Check Running...\n")
+        output = f"""
+        <h1>System Health Check 🚀</h1>
+        <p>CPU Load: {load}</p>
+        <p>Disk Total: {total // (2**30)} GB</p>
+        <p>Disk Used: {used // (2**30)} GB</p>
+        <p>Disk Free: {free // (2**30)} GB</p>
+        """
 
-    print(" CPU Info:")
-    get_cpu_usage()
-    
-    print("\n Disk Info:")
-    get_disk_usage()
+        self.wfile.write(output.encode())
 
-    print("\n System Check Completed!")
+def run():
+    server_address = ('', 8000)
+    httpd = HTTPServer(server_address, MyHandler)
+    print("Server running on port 8000...")
+    httpd.serve_forever()
 
 if __name__ == "__main__":
-    main()
+    run()
