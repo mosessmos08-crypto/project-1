@@ -20,7 +20,7 @@ jobs:
 
       # 3. Login DockerHub
       - name: Docker Login
-        run: docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASS }}
+        run: echo "${{ secrets.DOCKER_PASS }}" | docker login -u "${{ secrets.DOCKER_USER }}" --password-stdin
 
       # 4. Tag
       - name: Tag Image
